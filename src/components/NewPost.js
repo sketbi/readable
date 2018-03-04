@@ -8,14 +8,14 @@ import * as ReadableAPIUtil from '../utils/api'
 
 
 
-class Post extends Component {
+class NewPost extends Component {
 
   state = {}
 
   render() {
     return (
       <div>
-        <p>Testing</p>
+        <p>New Post</p>
       </div>
     );
   }
@@ -23,17 +23,17 @@ class Post extends Component {
 
 
 /*
-function mapStateToProps({ post, comment, category }) {
+function mapStateToProps({ NewPost, comment, category }) {
   return {
     category,
-    post
+    NewPost
   }
 }
 
 const mapDispatchToProps = dispatch => ({
-  boundGetAllPost: () => dispatch(GetAllPost()),
-  boundFilterPost: (category) => dispatch(filterPost(category))
+  boundGetAllNewPost: () => dispatch(GetAllNewPost()),
+  boundFilterNewPost: (category) => dispatch(filterNewPost(category))
 });
 */
-export default connect(null, null)(Post);
+export default connect(null, null)(NewPost);
 

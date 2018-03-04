@@ -1,23 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './components/App';
-import {createStore,applyMiddleware} from 'redux';
-import {Provider} from 'react-redux';
-import thunk from 'redux-thunk';
-import reducer from './reducers/index';
+import { routerMiddleware } from 'react-router-redux'
+
+import { Provider } from 'react-redux'
+import { ConnectedRouter } from 'react-router-redux'
+import store, { history } from './store'
+import App from './components/App'
 import registerServiceWorker from './registerServiceWorker';
 
-// window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-const store = createStore
-(
-    reducer,
-    applyMiddleware(thunk)
-);
-console.log("store state==>"+store.getState())
-console.log("json"+JSON.stringify(store.getState()))
+import './index.css';
+
+
 
 ReactDOM.render(
-    <Provider store={store}><App/></Provider>
+    <Provider store={store}>
+    <ConnectedRouter history={history}>
+      <div>
+        <App />
+      </div>
+    </ConnectedRouter>
+  </Provider>
     , document.getElementById('root'));
 registerServiceWorker();

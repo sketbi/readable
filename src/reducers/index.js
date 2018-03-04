@@ -1,3 +1,4 @@
+import { routerReducer } from 'react-router-redux'
 import { combineReducers } from 'redux'
 import * as ReadableAPIUtil from '../utils/api'
 
@@ -39,6 +40,7 @@ function comment(state=[],action){
 }
 
 export default combineReducers({
+  routing: routerReducer,
   post: post,
   comment: comment,
   category : category
