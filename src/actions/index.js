@@ -1,9 +1,12 @@
 import * as ReadableAPIUtil from '../utils/api'
 
+// categories action
+export const RECEIVED_CATEGORIES = 'RECEIVED_CATEGORIES';
+
+
+
 // posts actoins
 export const RECEIVED_POSTS = 'RECEIVED_POSTS';
-export const SET_ACTIVE_CATEGORY = 'SET_ACTIVE_CATEGORY';
-export const FILTER_POSTS = 'FILTER_POSTS';
 export const ADD_POST = 'ADD_POST';
 export const EDIT_POST = 'EDIT_POST';
 export const DELETE_POST = 'DELETE_POST';
@@ -21,14 +24,18 @@ export const receivedPosts = posts =>({
   posts
 });
 
-export const setActiveCategory = category =>({
-     type : SET_ACTIVE_CATEGORY,
-     category
-})
+export const receivedCategories= categories =>({
+    type: RECEIVED_CATEGORIES,
+    categories
+  });
 
 export const GetAllPosts = () => dispatch => (
     ReadableAPIUtil.getPosts().then(posts => dispatch(receivedPosts(posts)))
 
+);
+
+export const GetAllGategories = () => dispatch => (
+    ReadableAPIUtil.getCategories().then(categories => dispatch(receivedCategories(categories)))
 );
 
 
@@ -36,25 +43,22 @@ export const filterPosts = (category) => dispatch => (
     ReadableAPIUtil.getPostsByCategory(category).then(posts => dispatch(receivedPosts(posts)))
 );
 
-export function addPost({title,body,author,category,timestamp}){
+export const addNewPost = (post) => dispatch => (
+    ReadableAPIUtil.addPost(post).then(() => dispatch(addPost(post)))
+);
+
+
+export function addPost(post){
    return {
        type : ADD_POST,
-       title,
-       body,
-       author,
-       category,
-       timestamp
+       post
    }
 }
 
-export function editPost({id,title,body,author,category}){
+export function editPost(post){
    return {
        type : EDIT_POST,
-       id,
-       title,
-       body,
-       author,
-       category
+       post
    }
 }
 export function deletePost({id,deleted}){

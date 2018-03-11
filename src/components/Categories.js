@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 class Categories extends Component {
   state = {
-    categories: []
+    activeCategory: 'All'
   };
 
   updateSelectedCategory = (activeCategory) => {

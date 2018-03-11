@@ -3,21 +3,30 @@ import { combineReducers } from 'redux'
 import * as ReadableAPIUtil from '../utils/api'
 
 import {
-  RECEIVED_POSTS,SET_ACTIVE_CATEGORY,ADD_POST,EDIT_POST,DELETE_POST,VOTE_POST,
-  ADD_COMMENT,EDIT_COMMENT,DELETE_COMMENT,VOTE_COMMENT
+  RECEIVED_POSTS,
+  RECEIVED_CATEGORIES,
+  ADD_POST,
+  EDIT_POST,
+  DELETE_POST,
+  VOTE_POST,
+  ADD_COMMENT,
+  EDIT_COMMENT,
+  DELETE_COMMENT,
+  VOTE_COMMENT
 } from '../actions'
 
 
-function category(state={name:'All'},action){
+function category(state=[],action){
   switch (action.type) {
-    case SET_ACTIVE_CATEGORY :
-      return action.category; 
+    case RECEIVED_CATEGORIES :
+    return action.categories; 
     default :
       return state;
   }
 }
 
 function post(state=[],action){
+  const {post} = action;
   switch (action.type) {
     case RECEIVED_POSTS :
        if(action.posts){
@@ -25,6 +34,21 @@ function post(state=[],action){
        }else{
          return null;
        }
+    case ADD_POST :
+    return [
+      ...state,
+      {
+        id : post.id,
+        title: post.title,
+        body: post.body,
+        author: post.author,
+        category : post.category,
+        timestamp : post.timestamp,
+        voteScore : post.voteScore,
+        deleted : post.deleted,
+        commentCount : post.commentCount
+       }
+      ];
     default :
       return state;
   }

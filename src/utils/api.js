@@ -19,12 +19,31 @@ export const getCategories = () =>
 export const getPosts = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
-    .then(data => data)
+    .then(data => data);
+
     
 export const getPostsByCategory = (category) =>
     fetch(`${api}/${category}/posts`, { headers })
       .then(res => res.json())
-      .then(data => data)
+      .then(data => data);
   
+export const addPost = (post) => fetch(`${api}/posts`, {
+  method: 'POST', 
+  body: JSON.stringify(post), 
+  headers: new Headers({
+    'Accept': 'application/json',
+    'Authorization': token
+})}).then(res => res.json())
+.then(data => {
+  post["voteScore"] = data.voteScore;
+  post["deleted"] = data.deleted;
+  post["commentCount"] = data.commentCount;
+});
+
+
+export const getPostDetails = (id) =>
+    fetch(`${api}/posts/${id}`, { headers })
+      .then(res => res.json())
+      .then(data => data);
   
 
