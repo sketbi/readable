@@ -1,19 +1,44 @@
 import { routerReducer } from 'react-router-redux'
 import { combineReducers } from 'redux'
-import * as ReadableAPIUtil from '../utils/api'
 
 import {
-  RECEIVED_POSTS,
   RECEIVED_CATEGORIES,
+
+  RECEIVED_POSTS,
   ADD_POST,
-  EDIT_POST,
+  UPDATE_POST,
   DELETE_POST,
-  VOTE_POST,
+
+
+
   ADD_COMMENT,
   EDIT_COMMENT,
   DELETE_COMMENT,
-  VOTE_COMMENT
+  VOTE_COMMENT,
+
+  HAS_ERRORED,
+  IS_LOADING,
 } from '../actions'
+
+
+export function hasErrored(state = false, action) {
+  switch (action.type) {
+      case HAS_ERRORED:
+          return action.hasErrored;
+
+      default:
+          return state;
+  }
+}
+export function isLoading(state = false, action) {
+  switch (action.type) {
+      case IS_LOADING:
+          return action.isLoading;
+
+      default:
+          return state;
+  }
+}
 
 
 function category(state=[],action){
@@ -35,38 +60,36 @@ function post(state=[],action){
          return null;
        }
     case ADD_POST :
+    post.comments = []
     return [
       ...state,
-      {
-        id : post.id,
-        title: post.title,
-        body: post.body,
-        author: post.author,
-        category : post.category,
-        timestamp : post.timestamp,
-        voteScore : post.voteScore,
-        deleted : post.deleted,
-        commentCount : post.commentCount
-       }
+       post
       ];
-    default :
-      return state;
+    case UPDATE_POST:
+        return state.map( (statePost) => {
+          if(statePost.id !== post.id) {
+              return statePost;
+          }else{
+          return post
+          }   
+        });
+      case DELETE_POST:
+        return state.filter(e => e.id !== post.id);                  
+      default :
+        return state;
   }
 }
 
 function comment(state=[],action){
-  switch (action.type) {
-    case ADD_COMMENT :
-      return state;
-    default :
-      return state;
-  }
+  return state;
 }
 
 export default combineReducers({
   routing: routerReducer,
   post: post,
   comment: comment,
-  category : category
+  category : category,
+  hasErrored : hasErrored,
+  isLoading : isLoading
 })
 

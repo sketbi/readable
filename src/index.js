@@ -1,15 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { routerMiddleware } from 'react-router-redux'
 
 import { Provider } from 'react-redux'
-import { ConnectedRouter } from 'react-router-redux'
+import { ConnectedRouter,push } from 'react-router-redux'
+import { bindActionCreators } from 'redux';
+
+
 import store, { history } from './store'
 import App from './components/App'
 import registerServiceWorker from './registerServiceWorker';
 
 import './index.css';
-
+import './css/App.css';
 
 
 ReactDOM.render(

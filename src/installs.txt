@@ -1,1 +1,3 @@
 npm install --save react-redux
+
+  onClick={(event) => this.selectCategory(event,myCategory.name)} />)}

@@ -7,6 +7,7 @@ if (!token)
 
 const headers = {
   'Accept': 'application/json',
+  'Content-Type': 'application/json',
   'Authorization': token
 }
 
@@ -19,7 +20,7 @@ export const getCategories = () =>
 export const getPosts = () =>
   fetch(`${api}/posts`, { headers })
     .then(res => res.json())
-    .then(data => data);
+    .then(data => data).catch(e => e);
 
     
 export const getPostsByCategory = (category) =>
@@ -29,16 +30,14 @@ export const getPostsByCategory = (category) =>
   
 export const addPost = (post) => fetch(`${api}/posts`, {
   method: 'POST', 
-  body: JSON.stringify(post), 
+  body: JSON.stringify(post),
   headers: new Headers({
     'Accept': 'application/json',
+    'Content-Type': 'application/json',
     'Authorization': token
 })}).then(res => res.json())
-.then(data => {
-  post["voteScore"] = data.voteScore;
-  post["deleted"] = data.deleted;
-  post["commentCount"] = data.commentCount;
-});
+.then(data => data);
+
 
 
 export const getPostDetails = (id) =>

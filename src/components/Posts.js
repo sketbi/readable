@@ -1,19 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom'
-import MenuItem, { Header, Dropdown, Item, Icon, Container, Segment, Menu } from 'semantic-ui-react';
-import { GetAllPosts,GetAllGategories } from '../actions';
+import { withRouter, Route, Link } from 'react-router-dom'
+import { bindActionCreators } from 'redux'
+import { push } from 'react-router-redux'
+import MenuItem, { Grid, Header, Dropdown, Item, Icon, Container, Segment, Menu, Button } from 'semantic-ui-react';
+import { votePost, deleteExistingPost, getCommentForPost } from '../actions';
 import sortBy from 'sort-by';
-import { Link } from 'react-router-dom'
+import { Loading, ErrorMessage } from './Loader'
+import Moment from 'react-moment';
+ 
 
 
-import * as ReadableAPIUtil from '../utils/api'
-
-import coverNotAvailable from '../images/media-paragraph.png';
 
 const options = [
-  { key: 1, text: 'Timestamp', value: 'timestamp' },
-  { key: 2, text: 'Vote Score', value: 'voteScore' }
+  { key: 1, text: 'Newest', value: 'newest' },
+  { key: 2, text: 'Oldest', value: 'oldest' },
+  { key: 3, text: 'Popular', value: 'popular' }
 ]
 
 
@@ -22,73 +24,140 @@ class Posts extends Component {
 
   state = {
     activeCategory: 'All',
-    sortBy : ''
+    order: 'newest'
   }
 
-  componentDidMount() {
+
+
+  handleChange = (e, order) => {
+    e.preventDefault();
+    this.setState({ order });
   }
 
-  handleChange = (e, { sortBy }) => this.setState({ sortBy })
+  selectCategory = (event, activeCategory) => {
+    this.setState({ activeCategory });
+  }
 
-  updateSelectedCategory = (activeCategory) => this.setState({activeCategory})
-  resetDefaulState = () => this.setState({activeCategory: 'All'})
+  voteUpPost = (e, post) => {
+    e.preventDefault();
+    this.props.boundVotePost(post,"upVote");
+  }
+
+  voteDownPost = (e, post) => {
+    e.preventDefault();
+    this.props.boundVotePost(post,"downVote");
+  }
+
+
+  deletePost = (e, post) => {
+    e.preventDefault();
+    this.props.boundDeletePost(post);
+  }
+
+  routePostDetails = (e,post) => {
+    if(post.commentCount > 0){
+      this.props.changePageTo("/posts/"+post.id);
+    }else{
+      this.props.changePageTo("/posts/"+post.id);
+    }
+  }
+
+  orderPost = (posts, order) => {
+    let orderedPosts = [];
+    switch (order) {
+      case 'newest':
+        orderedPosts = posts.sort(sortBy("timestamp"));
+        return orderedPosts;
+      case 'oldest':
+        orderedPosts = posts.sort(sortBy("timestamp"));
+        orderedPosts.reverse
+        return orderedPosts;
+      case 'popular':
+        orderedPosts = posts.sort(sortBy("voteScore"));
+        return orderedPosts;
+      default:
+        return posts;
+    }
+  }
+
+
+  displayAllCategories = () => this.setState({ activeCategory: 'All' });
 
 
   render() {
+
+    if (this.props.hasErrored) {
+      this.props.changePageTo("/error");
+    }
+
+    if (this.props.isLoading) {
+      return <Loading></Loading>;
+    }
+
+
     const { category, post } = this.props;
-    const { sortBy,activeCategory } = this.state
-    let displayPosts = post.slice();
+    const { order, activeCategory } = this.state
+
+    let displayPosts = this.orderPost(post, order);
+
     if (activeCategory !== 'All') { displayPosts = displayPosts.filter(x => x.category === activeCategory); }
-    if (sortBy !== undefined && sortBy !== '') { displayPosts.sort(sortBy(sortBy)) }
- 
+
+
+    var divStyle = {
+      color: "#eee",
+      background: "#eee",
+      padding: "20px",
+      margin: "20px"
+    };
+
+
     return (
       <div>
-        <Container>
-        <Menu inverted>
-           <Menu.Item name='All' onClick={(event) => this.resetDefaulState()}/>
-          {category.map((myCategory, index) =>
-            <Menu.Item key={index} name={myCategory.name} active={this.state.activeCategory.name === myCategory.name}
-              onClick={(event) => this.updateSelectedCategory(myCategory.name)} />)}
-        </Menu>
- 
-          <Container style={{ margin: '5px', padding: '10px' }}>
-            <Segment clearing basic>
-              <Header as='h1' floated='left'>Readable By Udacity</Header>
-              <Header  size='small' floated='right'>
-                 <Dropdown text='Sort By' pointing className='link item'
-                  onChange={this.handleChange}
-                  options={options}
-                  placeholder='Sort By'
-                  value={sortBy}
-                  icon='sort'
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={3} style={divStyle}>
+              <Menu compact secondary vertical >
+                <Menu.Item name='All' active={this.state.activeCategory === 'All'}
+                  onClick={(event) => this.displayAllCategories()}
                 />
-              </Header>
-            </Segment>
-
-            <Item.Group>
-              {displayPosts.map((myPost, i) =>
-                <Item key={i}>
-                  <Item.Content>
-                    <Item.Header as='a' >{myPost.title}</Item.Header>
+                {category.map((myCategory, index) =>
+                  <Menu.Item key={index} name={myCategory.name} active={this.state.activeCategory === myCategory.name}
+                    onClick={(event) => this.selectCategory(event, myCategory.name)} />)}
+                />)}
+              </Menu>
+            </Grid.Column>
+            <Grid.Column width={9}>
+              <Segment clearing basic floated='right'>
+              </Segment>
+           
+              <Item.Group relaxed>
+                {displayPosts.map((myPost, i) =>
+                   
+                  <Item key={i}>
+                  <Item.Content verticalAlign='middle'>
+                    <Item.Header as='h2'><a onClick={(event) => this.routePostDetails(event, myPost)}>{myPost.title}</a></Item.Header>
+                    <Item.Meta>{myPost.author}</Item.Meta>
                     <Item.Meta>
-                      <span>Author: {myPost.author}</span>
+                      <Moment parse="YYYY-MM-DD HH:mm" format="YYYY/MM/DD" >
+                       {new Date(myPost.timestamp)}
+                      </Moment>
                     </Item.Meta>
-                    <Item.Description>
-                      <p>{myPost.body}</p>
-                    </Item.Description>
-                    <Item.Extra>
-                      <Segment clearing basic floated='left'>
-                        <Segment ><Icon as='i' size='large' disabled name='like outline' />{myPost.voteScore}</Segment>
-                        <Segment > <Icon as='i' disabled name='commenting outline' size='large' />{myPost.commentCount}</Segment>
-                      </Segment>
-                    </Item.Extra>
 
+                    <Item.Description>{myPost.body}</Item.Description>
+                    <Item.Extra>
+                    <b>{myPost.commentCount}</b> Comments <br/>
+                      <b>{myPost.voteScore}</b> Votes <br/>
+                      <Button icon='thumbs up' onClick={(event) => this.voteUpPost(event, myPost)}/>
+                      <Button icon='thumbs down' onClick={(event) => this.voteDownPost(event, myPost)}/>
+                    </Item.Extra>
                   </Item.Content>
-                </Item>
-              )}
-            </Item.Group>
-          </Container>
-        </Container>
+                </Item> 
+             )}
+            
+               </Item.Group>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
 
 
 
@@ -100,13 +169,24 @@ class Posts extends Component {
 }
 
 
-function mapStateToProps({ post, comment, category }) {
+function mapStateToProps({ post, comment, category, hasErrored, isLoading }) {
   return {
     category,
-    post
+    post,
+    hasErrored,
+    isLoading
   }
 }
 
+const mapDispatchToProps = dispatch => bindActionCreators({
+  changePageTo: (page) => push(page),
+  boundDeletePost: (post) => deleteExistingPost(post),
+  boundLoadComment : (post) => getCommentForPost(post),
+  boundVotePost : (post,option) => votePost(post,option)
 
-export default withRouter(connect(mapStateToProps, null)(Posts));
+}, dispatch)
+
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Posts));
 
