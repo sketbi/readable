@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux';
-import { withRouter, Route, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { push } from 'react-router-redux'
+import { Grid, Header, Modal,Dropdown, Container, Comment, Form, Button, Input,Divider} from 'semantic-ui-react';
 import Moment from 'react-moment';
 import { default as UUID } from "node-uuid";
 
@@ -12,26 +13,14 @@ import {
   deleteComment,
   updatePost,
   deleteExistingPost, 
-  getPostDetails,
   getCommentForPost,
   updateComment } from '../actions';
 
-import GridColumn, { Grid, Header, Modal,Dropdown, Item, Icon, Container, Segment, Comment, Form, Button, Input ,Menu} from 'semantic-ui-react';
-import Error from './Error'
-import { Loading, ErrorMessage } from './Loader'
-import avatar from '../images/avatar.jpg'
+import { Loading } from './Loader'
 import PostForm from './PostForm';
 import PostComment from './PostComment';
 
-const options = [
-  { key: 1, text: 'Choice 1', value: 1 },
-  { key: 2, text: 'Choice 2', value: 2 },
-  { key: 3, text: 'Choice 3', value: 3 },
-]
-
-
 class PostDetails extends Component {
-
 
   state = {
     post: {},
@@ -87,7 +76,7 @@ class PostDetails extends Component {
 
   getPostIndexInState = () => {
     const postIdFromRoute = this.props.match.params.id;
-    return this.props.post.findIndex(x => x.id == postIdFromRoute)
+    return this.props.post.findIndex(x => x.id === postIdFromRoute)
   }
 
   getPostFromState = () => {
@@ -227,8 +216,8 @@ class PostDetails extends Component {
                           deleteComment={this.deleteComment}
                           updateComment={this.updateComment}
                         />
-
                        </div>
+  
                   )}
                 <Form reply onSubmit={this.handleSubmit} >
                   <Form.Field id='form-input-control-author' control={Input} label='Name' placeholder='Name'
@@ -258,7 +247,7 @@ class PostDetails extends Component {
               <Modal open={this.state.deleteConfirmation} style={modalCenter}>
                <Header icon='delete' content='Delete Post' />
                 <Modal.Content>
-                   <p>Are you sure you want to delete this ?</p>
+                   <p>Are you sure you want to delete post {myPost.title} ?</p>
                 </Modal.Content>
                 <Modal.Actions>
                 <Button negative onClick={() => this.deletePost()}>
@@ -271,13 +260,13 @@ class PostDetails extends Component {
               </Modal>
 
             } 
-            </div>
+      </div>
 
     );
   }
 }
 
-function mapStateToProps({ post, comment, category, hasErrored, isLoading }) {
+function mapStateToProps({ post, category, hasErrored, isLoading }) {
   return {
     category,
     post,

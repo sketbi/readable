@@ -3,19 +3,10 @@ import { combineReducers } from 'redux'
 
 import {
   RECEIVED_CATEGORIES,
-
   RECEIVED_POSTS,
   ADD_POST,
   UPDATE_POST,
   DELETE_POST,
-
-
-
-  ADD_COMMENT,
-  EDIT_COMMENT,
-  DELETE_COMMENT,
-  VOTE_COMMENT,
-
   HAS_ERRORED,
   IS_LOADING,
 } from '../actions'
@@ -60,7 +51,6 @@ function post(state=[],action){
          return null;
        }
     case ADD_POST :
-    post.comments = []
     return [
       ...state,
        post
@@ -87,7 +77,6 @@ function comment(state=[],action){
 export default combineReducers({
   routing: routerReducer,
   post: post,
-  comment: comment,
   category : category,
   hasErrored : hasErrored,
   isLoading : isLoading

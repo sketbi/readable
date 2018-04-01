@@ -1,22 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter, Route, Link } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { bindActionCreators } from 'redux'
 import { push } from 'react-router-redux'
-import MenuItem, { Grid, Header, Dropdown, Item, Icon, Container, Segment, Menu, Button } from 'semantic-ui-react';
+import { Grid, Item, Segment, Menu, Button,Dropdown,Divider } from 'semantic-ui-react';
 import { votePost, deleteExistingPost, getCommentForPost } from '../actions';
 import sortBy from 'sort-by';
-import { Loading, ErrorMessage } from './Loader'
+import { Loading } from './Loader'
 import Moment from 'react-moment';
+
+
+
  
-
-
-
-const options = [
-  { key: 1, text: 'Newest', value: 'newest' },
-  { key: 2, text: 'Oldest', value: 'oldest' },
-  { key: 3, text: 'Popular', value: 'popular' }
-]
 
 
 
@@ -27,11 +22,17 @@ class Posts extends Component {
     order: 'newest'
   }
 
+  sortyByOptions =  [
+    { key: 1, text: 'Newest', value: 'newest' },
+    { key: 2, text: 'Oldest', value: 'oldest' },
+    { key: 3, text: 'Popular', value: 'popular' }
+  ]
 
 
-  handleChange = (e, order) => {
-    e.preventDefault();
-    this.setState({ order });
+  handleChange = (e, { value }) => {
+    this.setState({ 
+      order : value
+     });
   }
 
   selectCategory = (event, activeCategory) => {
@@ -63,18 +64,21 @@ class Posts extends Component {
   }
 
   orderPost = (posts, order) => {
-    let orderedPosts = [];
     switch (order) {
       case 'newest':
-        orderedPosts = posts.sort(sortBy("timestamp"));
-        return orderedPosts;
+       return posts.sort(function(a,b){
+        var c = new Date(a.timestamp);
+        var d = new Date(b.timestamp);
+        return d-c;
+        });
       case 'oldest':
-        orderedPosts = posts.sort(sortBy("timestamp"));
-        orderedPosts.reverse
-        return orderedPosts;
+      return posts.sort(function(a,b){
+        var c = new Date(a.timestamp);
+        var d = new Date(b.timestamp);
+        return c-d;
+        });
       case 'popular':
-        orderedPosts = posts.sort(sortBy("voteScore"));
-        return orderedPosts;
+      return posts.sort(sortBy('-voteScore', 'title'));
       default:
         return posts;
     }
@@ -128,11 +132,13 @@ class Posts extends Component {
             </Grid.Column>
             <Grid.Column width={9}>
               <Segment clearing basic floated='right'>
+                  <Dropdown item simple text='Sort By'closeOnChange direction='right' options={this.sortyByOptions}
+                     onChange={this.handleChange}
+                  />
               </Segment>
            
               <Item.Group relaxed>
                 {displayPosts.map((myPost, i) =>
-                   
                   <Item key={i}>
                   <Item.Content verticalAlign='middle'>
                     <Item.Header as='h2'><a onClick={(event) => this.routePostDetails(event, myPost)}>{myPost.title}</a></Item.Header>
@@ -142,7 +148,6 @@ class Posts extends Component {
                        {new Date(myPost.timestamp)}
                       </Moment>
                     </Item.Meta>
-
                     <Item.Description>{myPost.body}</Item.Description>
                     <Item.Extra>
                     <b>{myPost.commentCount}</b> Comments <br/>
@@ -150,6 +155,7 @@ class Posts extends Component {
                       <Button icon='thumbs up' onClick={(event) => this.voteUpPost(event, myPost)}/>
                       <Button icon='thumbs down' onClick={(event) => this.voteDownPost(event, myPost)}/>
                     </Item.Extra>
+                    <Divider />
                   </Item.Content>
                 </Item> 
              )}
@@ -169,7 +175,7 @@ class Posts extends Component {
 }
 
 
-function mapStateToProps({ post, comment, category, hasErrored, isLoading }) {
+function mapStateToProps({ post, category, hasErrored, isLoading }) {
   return {
     category,
     post,

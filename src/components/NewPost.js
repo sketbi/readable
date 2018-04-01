@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {default as UUID} from "node-uuid";
+
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -36,7 +36,7 @@ class NewPost extends Component {
 }
 
 
-function mapStateToProps({ post, comment, category }) {
+function mapStateToProps({ post,category }) {
     return {
       category
     }

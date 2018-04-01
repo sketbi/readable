@@ -43,7 +43,7 @@ class Categories extends Component {
 }
 
 
-function mapStateToProps({ routing, post, comments, category }) {
+function mapStateToProps({ routing, post, category }) {
   return {
     category
   }

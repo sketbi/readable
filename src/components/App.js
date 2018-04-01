@@ -4,13 +4,13 @@ import { bindActionCreators } from 'redux'
 import { GetAllPosts,GetAllGategories } from '../actions';
 
 
-import { Route, Link } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import { withRouter } from 'react-router';
 import { push } from 'react-router-redux'
 
 import 'semantic-ui-css/semantic.min.css';
 
-import { Container, Header, Image, Menu, Segment,Button,List } from 'semantic-ui-react'
+import { Container, Image, Menu, Segment,Button,List } from 'semantic-ui-react'
 
 import Posts from './Posts';
 import NewPost from './NewPost';
@@ -86,7 +86,7 @@ class App extends Component {
 }
 
 
-function mapStateToProps({ post, comment, category, hasErrored, isLoading }) {
+function mapStateToProps({ post, category, hasErrored, isLoading }) {
   return {
     hasErrored
   }

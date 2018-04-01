@@ -29,17 +29,6 @@ export const UPDATE_POST = 'UPDATE_POST';
 export const DELETE_POST = 'DELETE_POST';
 
 
-// comments actions
-export const RECEIVED_POST_COMMENTS = 'RECEIVED_POST_COMMENTS';
-export const UPDATE_COMMENT = 'UPDATE_COMMENT';
-
-
-export const ADD_COMMENT = 'ADD_COMMENT';
-export const EDIT_COMMENT = 'EDIT_COMMENT';
-export const DELETE_COMMENT = 'DELETE_COMMENT';
-export const VOTE_COMMENT = 'VOTE_COMMENT';
-
-
 export const HAS_ERRORED = 'HAS_ERRORED';
 export const IS_LOADING = 'IS_LOADING';
 
@@ -163,13 +152,9 @@ export function addNewPost(post) {
             })
             .then((response) => response.json())
             .then((data) => {
-                post.comments =[];
-                post.id = data.id;
-          
-            }).then(() =>{
-               return dispatch(addPost(post));
-            })
-            .catch(() => dispatch(hasErrored(true)));
+                data.comments =[];
+                return dispatch(addPost(data));
+            }).catch(() => dispatch(hasErrored(true)));
     };
 }
 
@@ -263,9 +248,8 @@ export function getCommentForPost(post) {
                 .then((comments) =>  {
                     post.commentCount = comments.length;
                     post["comments"] = comments;
-                    return dispatch(updatedPost(post));
                 }).then(() => {
-                   
+                    return dispatch(updatedPost(post));
                 })
                 .catch(() => dispatch(hasErrored(true)));
     }

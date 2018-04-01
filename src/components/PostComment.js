@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import GridColumn, { Header, Dropdown, Icon, Comment, Form, Button, Input } from 'semantic-ui-react';
+import  { Comment, Form, Button } from 'semantic-ui-react';
 import Moment from 'react-moment';
 import avatar from '../images/avatar.jpg'
-
-
-import * as ReadableAPIUtil from '../utils/api'
 
 
 
@@ -58,9 +55,9 @@ class PostComment extends Component {
         <p>{comment.body}</p>
          { this.state.editMode  && 
             <Form>
-              <Form.TextArea name='body' label='body'  value={this.state.body} onChange={this.handleChange} />
-              <Button content='Update'  icon='update' primary onClick={() => this.updateComment(comment)} />
-              <Button content='Cancel'  icon='update' onClick={()=> this.closeEditMode()} />
+              <Form.TextArea name='body'  value={this.state.body} onChange={this.handleChange} />
+              <Button content='Update' compact   primary onClick={() => this.updateComment(comment)} />
+              <Button content='Cancel'  compact onClick={()=> this.closeEditMode()} />
             </Form>
           }
         </Comment.Text>

@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Provider } from 'react-redux'
-import { ConnectedRouter,push } from 'react-router-redux'
-import { bindActionCreators } from 'redux';
+import { ConnectedRouter } from 'react-router-redux'
+
 
 
 import store, { history } from './store'

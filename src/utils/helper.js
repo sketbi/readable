@@ -6,3 +6,4 @@ export function getCategoriesOptions(categories){
           })
     }
 }
+
