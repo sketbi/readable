@@ -1,69 +1,68 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from 'redux'
-import { push } from 'react-router-redux'
-
-import { Container, Divider, Dropdown, Grid, Header, Image, List, Menu, Segment } from 'semantic-ui-react'
-import { setActiveCategory } from '../actions'
-
-import * as ReadableAPIUtil from '../utils/api'
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom'
+import { push } from 'react-router-redux'
+import { Container, Image, Menu,Button } from 'semantic-ui-react'
+import logo from '../images/logo.png'
+
+
+
+
 
 class Categories extends Component {
-  state = {
-    activeCategory: 'All'
-  };
 
-  updateSelectedCategory = (activeCategory) => {
-    this.props.boundSetActiveCategory(activeCategory)
+  routeCategoryPosts = (e,category) => {
+    if(category){
+      this.props.changePageTo("/"+category.path);
+    }else{
+      this.props.changePageTo("/");
+    }
   }
-
-
-  componentDidMount() {
-    ReadableAPIUtil.getCategories().then((categories) => this.setState({ categories }));
-  }
-
-
 
   render() {
-    const { category } = this.props;
-    const { categories } = this.state;
-    const displayCategories = [{ name: 'All', path: 'All' }].concat(categories);
+    const categories = this.props.category;
+    const routeCategory = (this.props.match.params.category) ? this.props.match.params.category : "All";
     return (
-      <div>
-        <Menu inverted>
-          {displayCategories.map((myCategory, index) =>
-            <Menu.Item key={index} name={myCategory.name} active={category.name === myCategory.name}
-              onClick={(event) => this.updateSelectedCategory(myCategory)} />)}
-        </Menu>
-        <p><button onClick={() => this.props.changePage()}>New Post</button></p>
+      <div> 
+        <Menu fixed='top' inverted>
+          <Container>
+            <Menu.Item as='h3' header>
+              <Image
+                size='mini'
+                src={logo}
+                style={{ marginRight: '1.5em' }}
+              />
+              Readable By Udacity
+            </Menu.Item>
+            <Menu.Item as='a' onClick={() => this.props.changePageTo('/')}>Home</Menu.Item>
+            {categories.map((myCategory, index) =>
+            <Menu.Item key={index} name={myCategory.name} active={routeCategory === myCategory.path}
+            onClick={(event) => this.routeCategoryPosts(event, myCategory)} />)}
 
+            <Menu.Menu position='right'>
+                <Menu.Item as='a' >
+                <Button  primary onClick={() => this.props.changePageTo('/new_post')}>Add Post</Button>
+                </Menu.Item>
+            </Menu.Menu>
+          </Container>
+        </Menu>
       </div>
     );
   }
 }
 
-
-function mapStateToProps({ routing, post, category }) {
+function mapStateToProps({ post, category, hasErrored, isLoading }) {
   return {
     category
   }
 }
 
-/*
-const mapDispatchToProps = dispatch => ({
-  boundSetActiveCategory : (category) => dispatch(setActiveCategory(category)),
-  changePage: () => dispatch(push('/post'))
-
-});
-*/
 const mapDispatchToProps = dispatch => bindActionCreators({
-  boundSetActiveCategory: (category) => setActiveCategory(category),
-  changePage: () => push('/post')
+  changePageTo: (page) => push(page),
 }, dispatch)
 
 
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Categories));
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps)(Categories);
 

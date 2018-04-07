@@ -9,14 +9,13 @@ import {
   DELETE_POST,
   HAS_ERRORED,
   IS_LOADING,
-} from '../actions'
+} from '../actions/actionTypes'
 
 
 export function hasErrored(state = false, action) {
   switch (action.type) {
       case HAS_ERRORED:
           return action.hasErrored;
-
       default:
           return state;
   }
@@ -25,7 +24,6 @@ export function isLoading(state = false, action) {
   switch (action.type) {
       case IS_LOADING:
           return action.isLoading;
-
       default:
           return state;
   }
@@ -60,7 +58,7 @@ function post(state=[],action){
           if(statePost.id !== post.id) {
               return statePost;
           }else{
-          return post
+              return post
           }   
         });
       case DELETE_POST:
@@ -68,10 +66,6 @@ function post(state=[],action){
       default :
         return state;
   }
-}
-
-function comment(state=[],action){
-  return state;
 }
 
 export default combineReducers({
